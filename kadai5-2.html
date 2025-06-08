@@ -4,9 +4,9 @@
     <title>演習課題5-2：外部APIの呼び出しテスト</title>
 </head>
 <body>
-    <h1 id="msg">何かのAPI</h1>
+    <h1 id="msg">日付引き算アプリAPI</h1>
     <form name="apiform"><p>
-        何かのフォーム：<input type="text" name="form_data">
+        今日の日付から引きたい日数を入力：<input type="text" name="form_data">
         <button type="button" id="btn1" onclick="some_api(this.form)">実行</button>
     </p></form>
     
@@ -14,7 +14,22 @@
     <script>
         async function some_api(myForm) {
             // ここにコードを書く
-            document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
+            document.getElementById("result").innerHTML += myForm.form_data.value + "<br />";
+
+            const input = parseInt(myForm.form_data.value);
+            if (!isNaN(input)) {
+                const today = new Date();
+                today.setDate(today.getDate() - input);
+
+                const year = today.getFullYear();
+                const month = today.getMonth() + 1;
+                const day = today.getDate();
+
+                document.getElementById("result").innerHTML += `→ ${year}年${month}月${day}日<br /><br />`;
+            } else {
+                document.getElementById("result").innerHTML += "→ 数字（日数）を入力してください<br /><br />";
+            }
+
             document.apiform.reset();
         }
     </script>
