@@ -4,32 +4,37 @@
     <title>演習課題5-2：外部APIの呼び出しテスト</title>
 </head>
 <body>
-    <h1 id="msg">日付引き算アプリAPI</h1>
+    <h1 id="msg">日付引きマスター</h1>
     <form name="apiform"><p>
-        今日の日付から引きたい日数を入力：<input type="text" name="form_data">
+        今日の日付から引きたい数字を入力：<input type="text" name="form_data">
         <button type="button" id="btn1" onclick="some_api(this.form)">実行</button>
     </p></form>
     
     <div id="result"></div>
     <script>
         async function some_api(myForm) {
-            // ここにコードを書く
             document.getElementById("result").innerHTML += myForm.form_data.value + "<br />";
 
             const input = parseInt(myForm.form_data.value);
-            if (!isNaN(input)) {
-                const today = new Date();
-                today.setDate(today.getDate() - input);
-
-                const year = today.getFullYear();
-                const month = today.getMonth() + 1;
-                const day = today.getDate();
-
-                document.getElementById("result").innerHTML += `→ ${year}年${month}月${day}日<br /><br />`;
-            } else {
+            if (isNaN(input)) {
                 document.getElementById("result").innerHTML += "→ 数字（日数）を入力してください<br /><br />";
+                document.apiform.reset();
+                return;
             }
 
+            // 外部APIから現在の日付を取得（WorldTimeAPI）
+            const response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
+            const data = await response.json();
+            const currentDateStr = data.datetime; // 例: "2024-06-04T14:53:00.123456+09:00"
+
+            const today = new Date(currentDateStr);
+            today.setDate(today.getDate() - input);
+
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
+
+            document.getElementById("result").innerHTML += `→ ${year}年${month}月${day}日<br /><br />`;
             document.apiform.reset();
         }
     </script>
